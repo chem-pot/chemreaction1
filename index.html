@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>산염기 평형 · 단계별 힌트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Gowun+Batang:wght@400;700&family=STIX+Two+Text:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f4f7fc;
+    --card: #ffffff;
+    --blue-50:#eef4ff;
+    --blue-100:#dbe8ff;
+    --blue-500:#3b6fe0;
+    --blue-600:#2f5ecb;
+    --blue-700:#274ea6;
+    --ink:#1f2937;
+    --sub:#6b7686;
+    --line:#e6ebf5;
+    --amber-bg:#fff7e6;
+    --amber-line:#ffe3ad;
+    --green-bg:#eafaf1;
+    --green-line:#b9ecce;
+    --radius:22px;
+    --shadow: 0 10px 28px rgba(38,63,130,0.10);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: linear-gradient(180deg, var(--bg) 0%, #eef2fb 100%);
+    font-family:'Nanum Gothic', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding: 26px 16px 40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .chem{font-family:'STIX Two Text', Georgia, serif; font-style:italic;}
+  .wrap{max-width: 640px; width:100%; margin: 0 auto;}
+
+  header.top{ text-align:center; margin-bottom: 18px; }
+  header.top .kicker{
+    display:inline-block;
+    font-size:13px;
+    font-weight:800;
+    color:var(--blue-600);
+    background:var(--blue-50);
+    border:1px solid var(--blue-100);
+    padding:5px 14px;
+    border-radius:999px;
+    letter-spacing:0.5px;
+    margin-bottom:10px;
+  }
+  header.top h1{
+    font-family:'Gowun Batang', serif;
+    font-size: 27px;
+    margin: 0 0 6px;
+    color:#182238;
+  }
+  header.top p{
+    color:var(--sub);
+    font-size:14px;
+    margin:0;
+    line-height:1.6;
+  }
+
+  /* problem-select dots */
+  .dots{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    margin: 18px 0 6px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:26px; height:26px;
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:800;
+    background:#e9edf7;
+    color:#8792a8;
+    cursor:pointer;
+    transition: all .15s ease;
+    border:2px solid transparent;
+  }
+  .dot.done{ background: var(--green-bg); color:#1a7a4a; }
+  .dot.current{
+    background: var(--blue-500);
+    color:#fff;
+    border-color: var(--blue-700);
+    transform: scale(1.08);
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-top:14px;
+    overflow:hidden;
+  }
+  .card-head{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    padding: 22px 22px 16px;
+  }
+  .num-badge{
+    flex:0 0 auto;
+    width:42px; height:42px;
+    border-radius:13px;
+    background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800;
+    font-size:16px;
+    box-shadow: 0 4px 10px rgba(59,111,224,0.35);
+  }
+  .head-text{flex:1;}
+  .tag{
+    display:inline-block;
+    font-size:11.5px;
+    font-weight:800;
+    color:var(--blue-600);
+    background:var(--blue-50);
+    padding:3px 9px;
+    border-radius:999px;
+    margin-bottom:7px;
+  }
+  .summary{
+    font-size:15.5px;
+    line-height:1.6;
+    color:#2a3245;
+  }
+
+  .body-inner{ padding: 4px 22px 22px; }
+
+  /* ---- hint slider (swipeable) ---- */
+  .hint-shell{ position:relative; }
+  .hint-slider{
+    position:relative;
+    overflow:hidden;
+    border-radius:16px;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .hint-slider.grabbing{ cursor:grabbing; }
+  .hint-track{
+    display:flex;
+    transition: transform .38s cubic-bezier(.22,.9,.3,1);
+  }
+  .hint-track.dragging{ transition:none; }
+  .hint-slide{
+    flex:0 0 100%;
+    box-sizing:border-box;
+    min-height:118px;
+    padding: 18px 44px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .hint-slide .txt{ font-size:14.5px; line-height:1.65; }
+  .hint-slide.hint{ background: var(--amber-bg); border:1px solid var(--amber-line); border-radius:16px; }
+  .hint-slide.cta{ background: var(--blue-50); border:1px solid var(--blue-100); border-radius:16px; flex-direction:column; align-items:flex-start; gap:6px; }
+  .hint-slide.cta .txt{ color:var(--blue-700); font-weight:700; font-size:15px; }
+  .hint-slide.cta .sub{ color:var(--sub); font-size:13px; font-weight:400; }
+  .hint-slide.done{ background: var(--green-bg); border:1px solid var(--green-line); border-radius:16px; }
+  .hint-slide.done .txt{ color:#1a7a4a; }
+
+  .h-badge{
+    flex:0 0 auto;
+    font-size:12px;
+    font-weight:800;
+    color:#a15c00;
+    background:#ffe9c2;
+    border-radius:8px;
+    padding:3px 9px;
+    height:fit-content;
+    white-space:nowrap;
+  }
+
+  .arrow-btn{
+    position:absolute;
+    top:50%;
+    transform: translateY(-50%);
+    width:34px; height:34px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,0.92);
+    color: var(--blue-700);
+    font-size:15px;
+    font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow: 0 4px 10px rgba(38,63,130,0.12);
+    z-index:3;
+    user-select:none;
+  }
+  .arrow-btn.left{ left:8px; }
+  .arrow-btn.right{ right:8px; }
+  .arrow-btn:disabled{ opacity:0.25; cursor:default; }
+
+  .hint-dots{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-top:10px;
+  }
+  .hint-dots .hd{
+    width:6px; height:6px;
+    border-radius:50%;
+    background:#dbe1ee;
+    transition: all .2s ease;
+  }
+  .hint-dots .hd.active{ background: var(--blue-500); width:16px; border-radius:4px; }
+  .hint-dots .hd.filled{ background:#b9c4e3; }
+
+  .swipe-tip{
+    text-align:center;
+    font-size:12px;
+    color:var(--sub);
+    margin-top:8px;
+  }
+
+  /* nav footer (problem-level) */
+  .nav-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:18px;
+  }
+  button.nav-btn{
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--ink);
+    font-family:'Nanum Gothic', sans-serif;
+    font-weight:800;
+    font-size:14px;
+    border-radius:14px;
+    padding:12px 20px;
+    cursor:pointer;
+    box-shadow: var(--shadow);
+    flex:1;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  button.nav-btn:hover{ transform: translateY(-1px); }
+  button.nav-btn:disabled{ opacity:0.4; cursor:default; transform:none; }
+  button.nav-btn.primary{
+    background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+    color:#fff;
+    border:none;
+  }
+  .nav-count{ font-size:13px; color:var(--sub); font-weight:800; white-space:nowrap; padding: 0 4px; }
+
+  footer{
+    text-align:center;
+    color:#9aa4b6;
+    font-size:12.5px;
+    margin-top:22px;
+    line-height:1.7;
+  }
+
+  @media (max-width:520px){
+    header.top h1{font-size:22px;}
+    .num-badge{width:36px;height:36px;font-size:14px;}
+    .summary{font-size:14.5px;}
+    .dot{width:23px;height:23px;font-size:10px;}
+    .hint-slide{ padding:16px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="kicker">화학 반응의 세계 · 산염기 평형</span>
+    <h1>문제별 단계 힌트</h1>
+    <p>힌트 슬라이드를 <b>왼쪽으로 넘기면 다음 힌트</b>, <b>오른쪽으로 당기면 이전 힌트</b>를 다시 볼 수 있어요.</p>
+  </header>
+
+  <div class="dots" id="dots"></div>
+
+  <div id="cardArea"></div>
+
+  <div class="nav-row">
+    <button class="nav-btn" id="prevBtn" onclick="goPrevProblem()">← 이전 문제</button>
+    <span class="nav-count" id="navCount">1 / 11</span>
+    <button class="nav-btn primary" id="nextBtn" onclick="goNextProblem()">다음 문제 →</button>
+  </div>
+
+  <footer>
+    힌트를 다 보고도 막힌다면 선생님께 질문해 보세요. · 새로고침하면 진행 상황이 초기화됩니다.
+  </footer>
+</div>
+
+<script>
+const problems = [
+  {
+    num: 1,
+    tag: "산 염기의 정의",
+    summary: '<span class="chem">HCl(g) + H₂O(l) ⇌ H₃O⁺(aq) + Cl⁻(aq)</span> 반응에 대한 설명 중 옳은 것을 &lt;보기&gt;에서 고르는 문제예요. (ㄱ. HCl의 짝염기는 Cl⁻이다 / ㄴ. HCl은 H₂O에 H⁺를 제공한다 / ㄷ. H₂O은 브뢴스테드·로우리 산으로 작용한다)',
+    hints: [
+      "브뢴스테드·로우리 정의에서 '산'은 H⁺(양성자)를 주는 쪽, '염기'는 H⁺를 받는 쪽이라는 것부터 떠올려 보세요.",
+      "짝산-짝염기 관계는 항상 H⁺ 하나 차이예요. HCl이 H⁺ 하나를 잃으면 무엇이 되는지 생각해서 ㄱ을 판단해 보세요.",
+      "정반응에서 HCl이 H₂O에게 H⁺를 주는지 받는지를 보고 ㄴ이 맞는 설명인지 확인해 보세요.",
+      "정반응에서 H₂O이 H⁺를 받았다면, H₂O은 산과 염기 중 어느 쪽으로 작용한 것일까요? 이를 바탕으로 ㄷ을 판단하고, ㄱ~ㄷ 조합을 답지와 비교해 보세요."
+    ]
+  },
+  {
+    num: 2,
+    tag: "이온화 상수와 산 세기",
+    summary: '같은 부피의 산 <span class="chem">HA(aq)</span>와 <span class="chem">HB(aq)</span>에 들어 있는 입자 수 그림을 비교하여 두 산의 이온화 상수(<span class="chem">K</span><sub>a</sub>) 크기를 비교하는 문제예요.',
+    hints: [
+      "이온화 상수 K\u2090는 산이 이온화(해리)되는 정도가 클수록 어떻게 변하는지부터 떠올려 보세요.",
+      "그림에서 각 비커 속 '이온화되지 않고 남아 있는 HA(또는 HB) 분자 수'와 '이온화되어 생긴 이온 수'를 세어 비교해 보세요.",
+      "같은 초기 농도(같은 부피)에서 이온 수가 더 많은 쪽이 더 많이 이온화된 것임을 이용해, 어느 산이 더 많이 이온화되었는지 판단해 보세요.",
+      "'많이 이온화될수록 K\u2090가 크다'는 원리를 적용해서 두 산의 K\u2090 크기를 부등호로 나타내 보세요."
+    ]
+  },
+  {
+    num: 3,
+    tag: "약산 수용액의 pH",
+    summary: '25℃, 0.1 M · 200 mL <span class="chem">HA(aq)</span>의 <span class="chem">pH = 4.0</span>일 때, HA의 이온화 상수(<span class="chem">K</span><sub>a</sub>)를 구하는 문제예요.',
+    hints: [
+      "약산 HA의 이온화 반응 <span class=\"chem\">HA(aq) + H₂O(l) ⇌ H₃O⁺(aq) + A⁻(aq)</span> 을 화학 반응식으로 먼저 적고, 그에 해당하는 평형 상수식 <span class=\"chem\">K</span><sub>a</sub> = [H₃O⁺][A⁻] / [HA] 를 세워 보세요.",
+      "주어진 <span class=\"chem\">pH = 4.0</span>을 이용해 pH = −log[H₃O⁺] 식으로 [H₃O⁺]를 구해 보세요.",
+      "평형식에서 HA 한 분자가 이온화될 때 H₃O⁺과 A⁻이 1:1 비율로 생긴다는 점을 이용하면, [H₃O⁺] = [A⁻]라는 것을 알 수 있어요.",
+      "처음 농도 0.1 M에서 이온화되어 없어진 만큼(=[H₃O⁺])을 뺀 값이 평형에서의 [HA]예요. 이제 <span class=\"chem\">K</span><sub>a</sub> = [H₃O⁺][A⁻] / [HA] 식에 세 값을 모두 대입해 계산해 보세요."
+    ]
+  },
+  {
+    num: 4,
+    tag: "중화 적정",
+    summary: '<span class="chem">HCl(aq)</span> 30 mL를 적정하는 데 사용된 0.2 M <span class="chem">NaOH(aq)</span>의 부피가 15 mL일 때 옳은 설명을 &lt;보기&gt;에서 고르는 문제예요.',
+    hints: [
+      "먼저 이 15 mL가 '완전히 중화된 지점(중화점)'인지, 문제 조건에서 확인해 보세요. 중화점에서는 산이 내놓는 H⁺의 몰수와 염기가 내놓는 OH⁻의 몰수가 같아서 <span class=\"chem\">nMV = n′M′V′</span> 식이 성립해요. (여기서 n, n′은 몰수가 아니라 산과 염기의 가수예요!)",
+      "HCl은 1가산, NaOH는 1가염기이므로 n = n′ = 1이에요. 이 값을 <span class=\"chem\">nMV = n′M′V′</span> 식에 대입해서 HCl의 몰농도를 직접 계산해 보세요.",
+      "계산한 HCl의 몰농도와 &lt;보기&gt; ㄱ에서 제시한 값을 비교해 참/거짓을 판단해 보세요.",
+      "혼합 용액 속에 실제로 존재하는 이온들(Na⁺, Cl⁻, 그리고 남는 H₃O⁺ 또는 OH⁻ 여부)을 따져보면서 나머지 &lt;보기&gt;를 하나씩 판단해 보세요."
+    ]
+  },
+  {
+    num: 5,
+    tag: "염의 가수분해",
+    summary: '25℃에서 <span class="chem">CH₃COONa(aq)</span>(pH ㉠), <span class="chem">X(aq)</span>(pH 7.0), <span class="chem">Y(aq)</span>(pH 6.2)의 자료를 보고 옳은 설명을 고르는 문제예요.',
+    hints: [
+      "각 염이 '강산+강염기', '약산+강염기', '강산+약염기' 중 어느 조합에서 만들어졌는지 먼저 떠올려 보세요.",
+      "CH₃COONa은 약산 CH₃COOH의 짝염기(CH₃COO⁻)가 물과 반응(가수분해)하면서 어떤 이온을 내놓는지 생각해서 ㉠이 7.0보다 큰지 작은지 판단해 보세요.",
+      "X는 pH가 정확히 7.0(중성)이에요. 이온화되어도 가수분해가 일어나지 않는 이온으로 이루어진 염, 즉 어떤 산·염기의 조합인지 생각해서 ㄴ을 판단해 보세요.",
+      "Y는 pH 6.2로 7.0보다 작은(산성) 염이에요. 어떤 종류의 이온이 가수분해되면 수용액이 산성이 되는지를 근거로 ㄷ을 판단해 보세요."
+    ]
+  },
+  {
+    num: 6,
+    tag: "완충 용액",
+    summary: '완충 용액에 대한 설명 중 옳은 것을 &lt;보기&gt;에서 고르는 문제예요. (혈액의 완충 작용, 완충 용액을 만드는 조합, 산·염기를 가했을 때의 pH 변화가 &lt;보기&gt;로 제시돼요.)',
+    hints: [
+      "완충 용액은 보통 '약산 + 그 짝염기' 또는 '약염기 + 그 짝산'을 함께 넣어 만든다는 정의부터 떠올려 보세요.",
+      "각 &lt;보기&gt;에서 제시한 조합(예: 강산·강염기 여부)이 완충 용액을 만드는 조합에 해당하는지 하나씩 확인해 보세요.",
+      "완충 용액에 소량의 산(H⁺)이나 염기(OH⁻)를 넣으면, 용액 속 약산 또는 짝염기 성분이 이를 어떻게 흡수하는지를 근거로 pH 변화가 작은 이유를 생각해 보세요.",
+      "우리 몸의 혈액이 일정한 pH를 유지하는 것이 완충 작용과 관련 있는지 떠올리며 나머지 &lt;보기&gt;를 판단해 보세요."
+    ]
+  },
+  {
+    num: 7,
+    tag: "이온화 상수와 산·염기 세기",
+    summary: '<span class="chem">HCN</span>, <span class="chem">CH₃COOH</span>의 <span class="chem">K</span><sub>a</sub>와 <span class="chem">CH₃NH₂</span>, <span class="chem">NH₃</span>의 <span class="chem">K</span><sub>b</sub> 값을 보고 옳은 설명을 고르는 문제예요.',
+    hints: [
+      "K\u2090(또는 <span class=\"chem\">K</span><sub>b</sub>) 값이 클수록 산(또는 염기)의 세기가 강하다는 규칙을 표의 숫자에 직접 적용해 보세요.",
+      "ㄱ을 판단하려면 HCN과 CH₃COOH의 K\u2090 값 두 개만 비교하면 돼요.",
+      "ㄴ을 판단하려면 CH₃NH₂와 NH₃의 <span class=\"chem\">K</span><sub>b</sub> 값 두 개만 비교하면 돼요.",
+      "ㄷ에서 'pH가 가장 큰 물질'을 찾으려면, 산일수록 pH가 낮아지고 염기일수록 pH가 높아진다는 점과 함께 '세기가 가장 약한 산'인지 '세기가 강한 염기'인지까지 4가지 물질을 모두 놓고 비교해 보세요."
+    ]
+  },
+  {
+    num: 8,
+    tag: "염의 가수분해 · 서술형",
+    summary: '<span class="chem">2NaOH(aq) + H₂CO₃(aq) → 2H₂O(l) + Na₂CO₃(aq)</span> 반응에서 생성된 <span class="chem">Na₂CO₃(aq)</span>의 액성을 예측하고 까닭을 설명하는 서술형 문제예요.',
+    hints: [
+      "반응식에서 H₂CO₃과 NaOH 중 어느 쪽이 강산·강염기이고 어느 쪽이 약산인지부터 정리해 보세요.",
+      "Na₂CO₃이 물에 녹으면 Na⁺과 CO₃²⁻으로 나뉘는데, 이 중 어떤 이온이 약산(H₂CO₃)의 짝염기인지 확인해 보세요.",
+      "약산의 짝염기가 물과 반응(가수분해)하면 H⁺을 받아 OH⁻을 내놓는지, 아니면 다른 반응이 일어나는지를 생각하며 액성을 예측해 보세요.",
+      "예측한 액성과 그 이유(어떤 이온이 가수분해되어 어떤 이온 농도가 늘어나는지)를 한 문장으로 정리해 서술해 보세요."
+    ]
+  },
+  {
+    num: 9,
+    tag: "완충 용액",
+    summary: '<span class="chem">CH₃COOH</span>와 <span class="chem">CH₃COONa</span>으로 이루어진 완충 용액에 산 또는 염기를 첨가했을 때의 반응을 화학 반응식으로 나타내는 문제예요.',
+    hints: [
+      "완충 용액 안에는 짝산인 CH₃COOH와 짝염기인 CH₃COO⁻(CH₃COONa에서 유래)가 함께 들어 있다는 것을 먼저 정리해 보세요.",
+      "산(H⁺ 또는 H₃O⁺)을 첨가하면, 둘 중 그 H⁺을 받아서 없앨 수 있는 성분이 무엇인지 생각해 보세요.",
+      "염기(OH⁻)를 첨가하면, 둘 중 H⁺을 내주어 OH⁻과 반응할 수 있는 성분이 무엇인지 생각해 보세요.",
+      "(1)과 (2) 각각에서 반응물과 생성물을 화학식으로 짝지어 알짜 반응식을 완성해 보세요."
+    ]
+  },
+  {
+    num: 10,
+    tag: "조사 및 발표하기",
+    summary: '젖산(락트산)에 대한 기사를 읽고, 우리 몸에서 산과 염기가 하는 역할 중 한 가지 물질을 선택해 조사·발표하는 활동이에요.',
+    hints: [
+      "먼저 기사에서 젖산이 만들어지는 과정과, 그것이 장내에서 어떤 역할(pH 조절, 유해균 억제 등)을 하는지 한 문단으로 정리해 보세요.",
+      "젖산 말고도 우리 몸에서 산 또는 염기로 작용하는 다른 물질들(위산, 혈액 속 완충계, 소화효소 관련 물질 등)을 떠올려 후보 목록을 만들어 보세요.",
+      "후보 중 하나를 선택했다면, 그 물질이 산 또는 염기로 작용하는 화학적 근거(이온화 여부, pH 등)를 찾아보세요.",
+      "조사한 화학적 근거와 몸속에서의 실제 역할을 연결해서, '도입 – 근거 – 결론(우리 몸에서의 의미)' 순서로 발표 내용을 구성해 보세요."
+    ]
+  },
+  {
+    num: 11,
+    tag: "조사 및 글쓰기",
+    summary: '우리 몸이 적절한 pH를 유지하는 데 필요한 완충 작용을 조사하고, pH가 조절되지 않을 때의 문제점을 설명하는 글쓰기 활동이에요.',
+    hints: [
+      "먼저 우리 몸에서 일정한 pH가 유지되는 대표적인 예(혈액 등)와 그 완충계가 무엇으로 이루어져 있는지 조사해 보세요.",
+      "완충 용액이 산이나 염기가 들어와도 pH를 거의 유지하는 원리를 앞의 완충 용액 문제(6, 9번)와 연결지어 다시 떠올려 보세요.",
+      "pH가 정상 범위를 벗어나면 몸속 단백질(효소)의 구조와 기능에 어떤 영향이 있을지 생각해 보세요.",
+      "실제 사례(산증·알칼리증 등 pH 조절 이상과 관련된 증상)를 조사해서, 완충 작용이 무너졌을 때의 문제점과 연결지어 글로 정리해 보세요."
+    ]
+  }
+];
+
+const cardArea = document.getElementById('cardArea');
+const dotsEl = document.getElementById('dots');
+const navCount = document.getElementById('navCount');
+const prevProblemBtn = document.getElementById('prevBtn');
+const nextProblemBtn = document.getElementById('nextBtn');
+
+// per-problem state: revealed hint count + which slide index is currently viewed
+const state = {};
+problems.forEach(p => { state[p.num] = { revealed: 0, view: 0 }; });
+
+let currentIndex = 0; // index into problems[]
+
+// ---- slide model ----
+// slide 0 when revealed=0 -> {type:'cta'}
+// slides for i in [0, revealed) -> {type:'hint', idx:i}
+// if revealed === total -> extra trailing {type:'done'}
+function buildSlides(p){
+  const s = state[p.num];
+  const slides = [];
+  if(s.revealed === 0){
+    slides.push({type:'cta'});
+  } else {
+    for(let i=0;i<s.revealed;i++) slides.push({type:'hint', idx:i});
+    if(s.revealed === p.hints.length) slides.push({type:'done'});
+  }
+  return slides;
+}
+
+function renderProblemDots(){
+  dotsEl.innerHTML = "";
+  problems.forEach((p, i) => {
+    const d = document.createElement('div');
+    const s = state[p.num];
+    d.className = 'dot' + (i === currentIndex ? ' current' : '') + (s.revealed === p.hints.length ? ' done' : '');
+    d.textContent = p.num;
+    d.onclick = () => { currentIndex = i; renderAll(); };
+    dotsEl.appendChild(d);
+  });
+}
+
+function renderCard(){
+  const p = problems[currentIndex];
+  const s = state[p.num];
+  const slides = buildSlides(p);
+  if(s.view > slides.length - 1) s.view = slides.length - 1;
+  if(s.view < 0) s.view = 0;
+
+  const slidesHtml = slides.map(sl => {
+    if(sl.type === 'cta'){
+      return `<div class="hint-slide cta">
+                <span class="txt">힌트를 보려면 오른쪽 화살표를 누르거나<br>왼쪽으로 슬라이드를 넘겨보세요</span>
+                <span class="sub">바로 답이 나오지 않도록 한 단계씩만 열려요</span>
+              </div>`;
+    }
+    if(sl.type === 'hint'){
+      return `<div class="hint-slide hint">
+                <span class="h-badge">힌트 ${sl.idx+1}/${p.hints.length}</span>
+                <span class="txt">${p.hints[sl.idx]}</span>
+              </div>`;
+    }
+    return `<div class="hint-slide done">
+              <span class="txt">여기까지가 준비된 힌트예요. 스스로 정리해 본 뒤, 답이 맞는지 선생님과 확인해 보세요.</span>
+            </div>`;
+  }).join('');
+
+  const dotsHtml = slides.map((sl, i) => {
+    let cls = 'hd';
+    if(i === s.view) cls += ' active';
+    else if(sl.type === 'hint') cls += ' filled';
+    return `<span class="${cls}"></span>`;
+  }).join('');
+
+  const canGoBack = s.view > 0;
+  const canGoForward = !(slides[s.view].type === 'done');
+
+  cardArea.innerHTML = `
+    <div class="card">
+      <div class="card-head">
+        <div class="num-badge">${p.num}</div>
+        <div class="head-text">
+          <span class="tag">${p.tag}</span>
+          <div class="summary">${p.summary}</div>
+        </div>
+      </div>
+      <div class="body-inner">
+        <div class="hint-shell">
+          <button class="arrow-btn left" id="hintPrev" ${canGoBack ? '' : 'disabled'}>‹</button>
+          <button class="arrow-btn right" id="hintNext" ${canGoForward ? '' : 'disabled'}>›</button>
+          <div class="hint-slider" id="hintSlider">
+            <div class="hint-track" id="hintTrack" style="transform: translateX(${-s.view*100}%)">
+              ${slidesHtml}
+            </div>
+          </div>
+        </div>
+        <div class="hint-dots">${dotsHtml}</div>
+        <div class="swipe-tip">← 밀어서 다음 힌트 · 당겨서 이전 힌트 →</div>
+      </div>
+    </div>
+  `;
+
+  navCount.textContent = (currentIndex+1) + " / " + problems.length;
+  prevProblemBtn.disabled = currentIndex === 0;
+  nextProblemBtn.disabled = currentIndex === problems.length - 1;
+
+  attachSwipeHandlers(p);
+  document.getElementById('hintPrev').onclick = () => stepHint(p, -1);
+  document.getElementById('hintNext').onclick = () => stepHint(p, 1);
+}
+
+function renderAll(){
+  renderProblemDots();
+  renderCard();
+}
+
+// move by direction (-1 = back, +1 = forward). Forward past revealed range unlocks next hint.
+function stepHint(p, dir){
+  const s = state[p.num];
+  const slides = buildSlides(p);
+
+  if(dir > 0){
+    if(s.view < slides.length - 1){
+      s.view++;
+    } else if(s.revealed < p.hints.length){
+      s.revealed++;
+      const newSlides = buildSlides(p);
+      s.view = newSlides.length - 1 - (s.revealed === p.hints.length ? 1 : 0);
+      // point to the newly revealed hint slide specifically
+      s.view = newSlides.findIndex(sl => sl.type==='hint' && sl.idx === s.revealed-1);
+    }
+    // if already at 'done' slide, forward does nothing (arrow disabled anyway)
+  } else {
+    if(s.view > 0) s.view--;
+  }
+  renderAll();
+}
+
+function attachSwipeHandlers(p){
+  const slider = document.getElementById('hintSlider');
+  const track = document.getElementById('hintTrack');
+  const s = state[p.num];
+  let startX = 0, currentX = 0, dragging = false, width = slider.offsetWidth;
+
+  function onDown(x){
+    dragging = true;
+    startX = x;
+    currentX = x;
+    width = slider.offsetWidth;
+    track.classList.add('dragging');
+    slider.classList.add('grabbing');
+  }
+  function onMove(x){
+    if(!dragging) return;
+    currentX = x;
+    let delta = currentX - startX;
+    // resistance at the very first slide (can't go right further) or when locked forward at 'done'
+    const slides = buildSlides(p);
+    if(s.view === 0 && delta > 0) delta = delta * 0.35;
+    if(slides[s.view] && slides[s.view].type === 'done' && delta < 0) delta = delta * 0.35;
+    const base = -s.view * width;
+    track.style.transform = `translateX(${base + delta}px)`;
+  }
+  function onUp(){
+    if(!dragging) return;
+    dragging = false;
+    track.classList.remove('dragging');
+    slider.classList.remove('grabbing');
+    const delta = currentX - startX;
+    const threshold = width * 0.18;
+    if(delta <= -threshold){
+      stepHint(p, 1);
+    } else if(delta >= threshold){
+      stepHint(p, -1);
+    } else {
+      track.style.transform = `translateX(${-s.view*100}%)`;
+      // snap back with transition
+      track.style.transition = '';
+    }
+  }
+
+  // touch
+  slider.addEventListener('touchstart', e => onDown(e.touches[0].clientX), {passive:true});
+  slider.addEventListener('touchmove', e => onMove(e.touches[0].clientX), {passive:true});
+  slider.addEventListener('touchend', onUp);
+
+  // mouse (for teacher projecting from laptop/trackpad)
+  slider.addEventListener('mousedown', e => { e.preventDefault(); onDown(e.clientX); });
+  window.addEventListener('mousemove', e => onMove(e.clientX));
+  window.addEventListener('mouseup', onUp);
+}
+
+function goPrevProblem(){
+  if(currentIndex > 0){ currentIndex--; renderAll(); }
+}
+function goNextProblem(){
+  if(currentIndex < problems.length - 1){ currentIndex++; renderAll(); }
+}
+
+renderAll();
+</script>
+</body>
+</html>
